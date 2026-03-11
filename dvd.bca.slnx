@@ -1,0 +1,23 @@
+<Solution>
+    <Configurations>
+        <Platform Name="Any CPU" />
+    </Configurations>
+    <Folder Name="/src/">
+        <Project Path="src/dvd.bca.Domain/dvd.bca.Domain.csproj" />
+        <Project Path="src/dvd.bca.Application/dvd.bca.Application.csproj" />
+        <Project Path="src/dvd.bca.EntityFrameworkCore/dvd.bca.EntityFrameworkCore.csproj" />
+        <Project Path="src/dvd.bca.Domain.Shared/dvd.bca.Domain.Shared.csproj" />
+        <Project Path="src/dvd.bca.Application.Contracts/dvd.bca.Application.Contracts.csproj" />
+        <Project Path="src/dvd.bca.HttpApi/dvd.bca.HttpApi.csproj" />
+        <Project Path="src/dvd.bca.HttpApi.Client/dvd.bca.HttpApi.Client.csproj" />
+        <Project Path="src/dvd.bca.DbMigrator/dvd.bca.DbMigrator.csproj" />
+        <Project Path="src/dvd.bca.HttpApi.Host/dvd.bca.HttpApi.Host.csproj" />
+    </Folder>
+    <Folder Name="/test/">
+        <Project Path="test/dvd.bca.Application.Tests/dvd.bca.Application.Tests.csproj" />
+        <Project Path="test/dvd.bca.EntityFrameworkCore.Tests/dvd.bca.EntityFrameworkCore.Tests.csproj" />
+        <Project Path="test/dvd.bca.TestBase/dvd.bca.TestBase.csproj" />
+        <Project Path="test/dvd.bca.Domain.Tests/dvd.bca.Domain.Tests.csproj" />
+        <Project Path="test/dvd.bca.HttpApi.Client.ConsoleTestApp/dvd.bca.HttpApi.Client.ConsoleTestApp.csproj" />
+    </Folder>
+</Solution>

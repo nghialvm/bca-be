@@ -1,0 +1,104 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "5.1.0",
+      "isInstalled": true,
+      "creationTime": "03/11/2026 04:05:53 +00:00"
+    },
+    "Volo.Abp.Account": {
+      "version": "10.1.0",
+      "isInstalled": true,
+      "creationTime": "03/11/2026 04:05:53 +00:00"
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "10.1.0",
+      "isInstalled": true,
+      "creationTime": "03/11/2026 04:05:53 +00:00"
+    },
+    "Volo.Abp.Identity": {
+      "version": "10.1.0",
+      "isInstalled": true,
+      "creationTime": "03/11/2026 04:05:53 +00:00"
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "10.1.0",
+      "isInstalled": true,
+      "creationTime": "03/11/2026 04:05:53 +00:00"
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "10.1.0",
+      "isInstalled": true,
+      "creationTime": "03/11/2026 04:05:53 +00:00"
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "10.1.0",
+      "isInstalled": true,
+      "creationTime": "03/11/2026 04:05:53 +00:00"
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "dvd.bca.Application": {
+      "path": "src/dvd.bca.Application/dvd.bca.Application.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.Application.Tests": {
+      "path": "test/dvd.bca.Application.Tests/dvd.bca.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "dvd.bca.Domain.Shared": {
+      "path": "src/dvd.bca.Domain.Shared/dvd.bca.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.Application.Contracts": {
+      "path": "src/dvd.bca.Application.Contracts/dvd.bca.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.HttpApi": {
+      "path": "src/dvd.bca.HttpApi/dvd.bca.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.HttpApi.Client": {
+      "path": "src/dvd.bca.HttpApi.Client/dvd.bca.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.EntityFrameworkCore.Tests": {
+      "path": "test/dvd.bca.EntityFrameworkCore.Tests/dvd.bca.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "dvd.bca.EntityFrameworkCore": {
+      "path": "src/dvd.bca.EntityFrameworkCore/dvd.bca.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.TestBase": {
+      "path": "test/dvd.bca.TestBase/dvd.bca.TestBase.abppkg",
+      "folder": "test"
+    },
+    "dvd.bca.Domain.Tests": {
+      "path": "test/dvd.bca.Domain.Tests/dvd.bca.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "dvd.bca.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/dvd.bca.HttpApi.Client.ConsoleTestApp/dvd.bca.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "dvd.bca.DbMigrator": {
+      "path": "src/dvd.bca.DbMigrator/dvd.bca.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.HttpApi.Host": {
+      "path": "src/dvd.bca.HttpApi.Host/dvd.bca.HttpApi.Host.abppkg",
+      "folder": "src"
+    },
+    "dvd.bca.Domain": {
+      "path": "src/dvd.bca.Domain/dvd.bca.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}
