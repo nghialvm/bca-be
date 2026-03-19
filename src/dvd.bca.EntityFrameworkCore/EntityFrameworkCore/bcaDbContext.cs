@@ -2,6 +2,7 @@ using dvd.bca.Configuration;
 using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.Entity.CandidateRoot;
 using dvd.bca.Entity.Recruitment;
+using dvd.bca.Entity.Results;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -58,6 +59,7 @@ public class bcaDbContext :AbpDbContext<bcaDbContext>,IIdentityDbContext
     public DbSet<InterviewSchedule> InterviewSchedules { get; set; }
     public DbSet<InterviewEvaluation> InterviewEvaluations { get; set; }
     public DbSet<Offer> Offers { get; set; }
+    public DbSet<Employee> Employees { get; set; }
     public DbSet<CandidateResponse> CandidateResponses { get; set; }
 
     #endregion
@@ -104,5 +106,6 @@ public class bcaDbContext :AbpDbContext<bcaDbContext>,IIdentityDbContext
         builder.ApplyConfiguration(new InterviewEvaluationConfig());
         builder.ApplyConfiguration(new OfferConfig());
         builder.ApplyConfiguration(new CandidateResponseConfig());
+        builder.ApplyConfiguration(new EmployeeConfiguration());
     }
 }

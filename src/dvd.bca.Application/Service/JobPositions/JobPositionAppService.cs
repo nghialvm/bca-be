@@ -1,16 +1,19 @@
 ﻿using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.JobPositions;
 using dvd.bca.JobPositions.Dtos;
+using dvd.bca.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 namespace dvd.bca.Service.JobPositions
 {
+    [Authorize(bcaPermissions.Recruitment.JobPositions.Default)]
     public class JobPositionAppService :
         CrudAppService<
             JobPosition,
@@ -24,6 +27,11 @@ namespace dvd.bca.Service.JobPositions
         public JobPositionAppService(IRepository<JobPosition, Guid> repository)
             : base(repository)
         {
+            GetPolicyName = bcaPermissions.Recruitment.JobPositions.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.JobPositions.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.JobPositions.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.JobPositions.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.JobPositions.Delete;
         }
         // Create
         public override async Task<JobPositionDto> CreateAsync(CreateJobPositionDto input)

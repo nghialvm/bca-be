@@ -2,11 +2,14 @@ using AutoMapper;
 using dvd.bca.Applications.Dtos;
 using dvd.bca.ApplicationScreenings.Dtos;
 using dvd.bca.CandidateDocuments.Dtos;
+using dvd.bca.CandidateResponses.Dtos;
 using dvd.bca.Candidates.Dtos;
 using dvd.bca.Departments.Dtos;
+using dvd.bca.Employees.Dtos;
 using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.Entity.CandidateRoot;
 using dvd.bca.Entity.Recruitment;
+using dvd.bca.Entity.Results;
 using dvd.bca.InterviewEvaluations.Dtos;
 using dvd.bca.InterviewSchedules.Dtos;
 using dvd.bca.JobPositions.Dtos;
@@ -73,5 +76,13 @@ public class bcaApplicationAutoMapperProfile : Profile
         CreateMap<Offer, OfferDto>();
         CreateMap<CreateOfferDto, Offer>();
         CreateMap<UpdateOfferDto, Offer>();
+
+        CreateMap<Employee, EmployeeDto>();
+        CreateMap<CreateEmployeeDto, Employee>();
+        CreateMap<UpdateEmployeeDto, Employee>();
+
+        CreateMap<CandidateResponse, CandidateResponseDto>();
+        CreateMap<CreateCandidateResponseDto, CandidateResponse>();
+        CreateMap<UpdateCandidateResponseDto, CandidateResponse>();
     }
 }

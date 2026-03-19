@@ -1,4 +1,5 @@
-﻿using System;
+﻿using dvd.bca.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,22 +20,26 @@ namespace dvd.bca.Entity.ApplicationRoot
         public Guid? OfferId { get; set; }
 
         [Required]
-        [StringLength(100)]
-        [Column("ResponseType", TypeName = "nvarchar(100)")]
-        public string ResponseType { get; set; } = string.Empty;
+        [Column("ResponseType", TypeName = "int")]
+        public CandidateResponseType ResponseType { get; set; }
+
+        [Required]
+        [Column("ResponseChannel", TypeName = "int")]
+        public CandidateResponseChannel ResponseChannel { get; set; }
 
         [Required]
         [Column("ResponseTime", TypeName = "datetime2")]
         public DateTime ResponseTime { get; set; }
 
+        [StringLength(2000)]
+        [Column("ResponseContent", TypeName = "nvarchar(2000)")]
+        public string ResponseContent { get; set; }
+
+        [StringLength(1000)]
         [Column("Note", TypeName = "nvarchar(1000)")]
-        public string? Note { get; set; }
+        public string Note { get; set; }
 
-        // Navigation
-        [ForeignKey(nameof(ApplicationId))]
         public virtual Application Application { get; set; }
-
-        [ForeignKey(nameof(OfferId))]
-        public virtual Offer Offer { get; set; }    
+        public virtual Offer Offer { get; set; }
     }
 }

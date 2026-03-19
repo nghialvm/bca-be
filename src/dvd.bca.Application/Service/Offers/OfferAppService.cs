@@ -1,7 +1,11 @@
 ﻿using dvd.bca.Entity.ApplicationRoot;
+using dvd.bca.Entity.CandidateRoot;
 using dvd.bca.Enums;
 using dvd.bca.Offers;
 using dvd.bca.Offers.Dtos;
+using dvd.bca.Permissions;
+using dvd.bca.Service.Emails;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -13,6 +17,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace dvd.bca.Service.Offers
 {
+    [Authorize(bcaPermissions.Recruitment.Offers.Default)]
     public class OfferAppService
         : CrudAppService<
             Offer,
@@ -24,13 +29,25 @@ namespace dvd.bca.Service.Offers
           IOfferAppService
     {
         private readonly IRepository<Application, Guid> _applicationRepository;
+        private readonly IRepository<Candidate, Guid> _candidateRepository;
+        private readonly CandidateEmailManager _candidateEmailManager;
 
         public OfferAppService(
             IRepository<Offer, Guid> repository,
-            IRepository<Application, Guid> applicationRepository)
-            : base(repository)
+            IRepository<Application, Guid> applicationRepository,
+            IRepository<Candidate, Guid> candidateRepository,
+            CandidateEmailManager candidateEmailManager)
+     : base(repository)
         {
             _applicationRepository = applicationRepository;
+            _candidateRepository = candidateRepository;
+            _candidateEmailManager = candidateEmailManager;
+
+            GetPolicyName = bcaPermissions.Recruitment.Offers.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.Offers.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.Offers.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.Offers.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.Offers.Delete;
         }
 
         public override async Task<OfferDto> CreateAsync(CreateOfferDto input)
@@ -44,6 +61,23 @@ namespace dvd.bca.Service.Offers
                 entity.Status = OfferStatus.Draft;
 
                 entity = await Repository.InsertAsync(entity, autoSave: true);
+
+                var application = await _applicationRepository.GetAsync(entity.ApplicationId);
+                var candidate = await _candidateRepository.GetAsync(application.CandidateId);
+                if (candidate.Email != null)
+                {
+                    await _candidateEmailManager.SendOfferAsync(
+                        candidate.Email,
+                        candidate.FullName,
+                        "Your Position",
+                        entity.Salary.ToString("N0"),
+                        entity.StartDate?.ToString("dd/MM/yyyy") ?? ""
+                    );
+                }
+                else
+                {
+                    throw new UserFriendlyException("Email cannot be empty");
+                }
 
                 return MapToGetOutputDto(entity);
             }

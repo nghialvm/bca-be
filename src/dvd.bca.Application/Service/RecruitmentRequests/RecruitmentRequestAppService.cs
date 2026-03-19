@@ -2,6 +2,7 @@
 using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.Entity.Recruitment;
 using dvd.bca.Enums;
+using dvd.bca.Permissions;
 using dvd.bca.RecruitmentRequests;
 using dvd.bca.RecruitmentRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace dvd.bca.Service.RecruitmentRequests
 {
-    [Authorize]
+    [Authorize(bcaPermissions.Recruitment.RecruitmentRequests.Default)]
     public class RecruitmentRequestAppService
         : CrudAppService<
             RecruitmentRequest,
@@ -37,6 +38,12 @@ namespace dvd.bca.Service.RecruitmentRequests
         {
             _departmentRepository = departmentRepository;
             _jobPositionRepository = jobPositionRepository;
+
+            GetPolicyName = bcaPermissions.Recruitment.RecruitmentRequests.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.RecruitmentRequests.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.RecruitmentRequests.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.RecruitmentRequests.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.RecruitmentRequests.Delete;
         }
 
         protected override async Task<IQueryable<RecruitmentRequest>> CreateFilteredQueryAsync(PagedAndSortedResultRequestDto input)
@@ -148,6 +155,7 @@ namespace dvd.bca.Service.RecruitmentRequests
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.RecruitmentRequests.SubmitForApproval)]
         public async Task<RecruitmentRequestDto> SubmitForApprovalAsync(Guid id)
         {
             try
@@ -173,6 +181,7 @@ namespace dvd.bca.Service.RecruitmentRequests
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.RecruitmentRequests.Approve)]
         public async Task<RecruitmentRequestDto> ApproveAsync(Guid id)
         {
             try
@@ -199,6 +208,7 @@ namespace dvd.bca.Service.RecruitmentRequests
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.RecruitmentRequests.Reject)]
         public async Task<RecruitmentRequestDto> RejectAsync(Guid id, RejectRecruitmentRequestDto input)
         {
             try
@@ -230,6 +240,7 @@ namespace dvd.bca.Service.RecruitmentRequests
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.RecruitmentRequests.Publish)]
         public async Task<RecruitmentRequestDto> PublishAsync(Guid id)
         {
             try
@@ -259,6 +270,7 @@ namespace dvd.bca.Service.RecruitmentRequests
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.RecruitmentRequests.Close)]
         public async Task<RecruitmentRequestDto> CloseAsync(Guid id, CloseRecruitmentRequestDto input)
         {
             try

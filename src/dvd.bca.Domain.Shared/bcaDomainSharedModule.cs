@@ -43,12 +43,14 @@ public class bcaDomainSharedModule : AbpModule
         Configure<AbpLocalizationOptions>(options =>
         {
             options.Resources
-                .Add<bcaResource>("en")
+                .Add<bcaResource>("vi")
                 .AddBaseTypes(typeof(AbpValidationResource))
                 .AddVirtualJson("/Localization/bca");
 
             options.DefaultResourceType = typeof(bcaResource);
-            
+
+            options.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
+
             options.Languages.Add(new LanguageInfo("en", "en", "English")); 
             options.Languages.Add(new LanguageInfo("ar", "ar", "Arabic")); 
             options.Languages.Add(new LanguageInfo("zh-Hans", "zh-Hans", "Chinese (Simplified)")); 

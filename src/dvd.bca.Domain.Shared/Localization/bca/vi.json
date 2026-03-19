@@ -1,0 +1,53 @@
+{
+  "culture": "vi",
+  "texts": {
+    "Permission:bca": "Hệ thống BCA",
+
+    "Permission:Recruitment": "Tuyển dụng",
+
+    "Permission:Departments": "Phòng ban",
+    "Permission:JobPositions": "Vị trí",
+    "Permission:RecruitmentRequests": "Yêu cầu tuyển dụng",
+    "Permission:Candidates": "Ứng viên",
+    "Permission:CandidateDocuments": "Hồ sơ ứng viên",
+    "Permission:Applications": "Đơn ứng tuyển",
+    "Permission:ApplicationScreenings": "Sàng lọc hồ sơ",
+    "Permission:InterviewSchedules": "Lịch phỏng vấn",
+    "Permission:InterviewEvaluations": "Đánh giá phỏng vấn",
+    "Permission:Offers": "Offer",
+    "Permission:Employees": "Nhân viên",
+    "Permission:CandidateResponses": "Phản hồi ứng viên",
+    "Permission:Reports": "Báo cáo",
+
+    "Permission:Create": "Tạo",
+    "Permission:Update": "Cập nhật",
+    "Permission:Delete": "Xóa",
+
+    "Permission:SubmitForApproval": "Gửi duyệt",
+    "Permission:Approve": "Phê duyệt",
+    "Permission:Reject": "Từ chối",
+    "Permission:Publish": "Đăng tuyển",
+    "Permission:Close": "Đóng",
+
+    "Permission:ChangeStatus": "Đổi trạng thái",
+    "Permission:Download": "Tải xuống",
+
+    "Permission:Confirm": "Xác nhận",
+    "Permission:Cancel": "Hủy",
+    "Permission:Reschedule": "Đổi lịch",
+    "Permission:Complete": "Hoàn thành",
+
+    "Permission:Submit": "Gửi đánh giá",
+
+    "Permission:SendOffer": "Gửi Offer",
+    "Permission:AcceptOffer": "Chấp nhận Offer",
+    "Permission:RejectOffer": "Từ chối Offer",
+    "Permission:Expire": "Hết hạn",
+
+    "Permission:ConfirmInterview": "Xác nhận phỏng vấn",
+    "Permission:RejectInterview": "Từ chối phỏng vấn",
+
+    "Permission:ViewReport": "Xem báo cáo",
+    "Permission:Export": "Xuất file"
+  }
+}

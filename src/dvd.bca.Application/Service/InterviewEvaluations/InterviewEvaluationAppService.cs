@@ -1,6 +1,8 @@
 ﻿using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.InterviewEvaluations;
 using dvd.bca.InterviewEvaluations.Dtos;
+using dvd.bca.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace dvd.bca.Service.InterviewEvaluations
 {
+    [Authorize(bcaPermissions.Recruitment.InterviewEvaluations.Default)]
     public class InterviewEvaluationAppService
         : CrudAppService<
             InterviewEvaluation,
@@ -35,6 +38,12 @@ namespace dvd.bca.Service.InterviewEvaluations
             _interviewEvaluationRepository = repository;
             _interviewScheduleRepository = interviewScheduleRepository;
             _applicationRepository = applicationRepository;
+
+            GetPolicyName = bcaPermissions.Recruitment.InterviewEvaluations.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.InterviewEvaluations.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.InterviewEvaluations.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.InterviewEvaluations.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.InterviewEvaluations.Delete;
         }
 
         public override async Task<InterviewEvaluationDto> CreateAsync(CreateInterviewEvaluationDto input)
@@ -127,6 +136,7 @@ namespace dvd.bca.Service.InterviewEvaluations
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.InterviewEvaluations.Default)]
         public async Task<List<InterviewEvaluationDto>> GetListByInterviewScheduleIdAsync(Guid interviewScheduleId)
         {
             try
@@ -147,6 +157,7 @@ namespace dvd.bca.Service.InterviewEvaluations
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.InterviewEvaluations.Default)]
         public async Task<List<InterviewEvaluationDto>> GetListByApplicationIdAsync(Guid applicationId)
         {
             try
@@ -167,11 +178,13 @@ namespace dvd.bca.Service.InterviewEvaluations
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.InterviewEvaluations.Create)]
         public async Task<InterviewEvaluationDto> RecordEvaluationResultAsync(CreateInterviewEvaluationDto input)
         {
             return await CreateAsync(input);
         }
 
+        [Authorize(bcaPermissions.Recruitment.InterviewEvaluations.Update)]
         public async Task<InterviewEvaluationDto> ChangeEvaluationResultAsync(Guid id, UpdateInterviewEvaluationDto input)
         {
             return await UpdateAsync(id, input);

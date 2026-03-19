@@ -1,18 +1,21 @@
 ﻿using dvd.bca.Departments;
 using dvd.bca.Departments.Dtos;
 using dvd.bca.Entity.ApplicationRoot;
+using dvd.bca.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace dvd.bca.Service.Departments
 {
+    [Authorize(bcaPermissions.Recruitment.Departments.Default)]
     public class DepartmentAppService :
         CrudAppService<
             Department,
@@ -27,6 +30,11 @@ namespace dvd.bca.Service.Departments
         public DepartmentAppService(IRepository<Department, Guid> repository)
             : base(repository)
         {
+            GetPolicyName = bcaPermissions.Recruitment.Departments.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.Departments.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.Departments.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.Departments.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.Departments.Delete;
         }
 
         // CREATE

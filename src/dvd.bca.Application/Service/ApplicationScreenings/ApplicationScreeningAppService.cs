@@ -2,6 +2,7 @@
 using dvd.bca.ApplicationScreenings.Dtos;
 using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.Enums;
+using dvd.bca.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace dvd.bca.Service.ApplicationScreenings
 {
-    [Authorize]
+    [Authorize(bcaPermissions.Recruitment.ApplicationScreenings.Default)]
     public class ApplicationScreeningAppService
         : CrudAppService<
             ApplicationScreening,
@@ -36,6 +37,12 @@ namespace dvd.bca.Service.ApplicationScreenings
         {
             _applicationScreeningRepository = applicationScreeningRepository;
             _applicationRepository = applicationRepository;
+
+            GetPolicyName = bcaPermissions.Recruitment.ApplicationScreenings.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.ApplicationScreenings.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.ApplicationScreenings.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.ApplicationScreenings.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.ApplicationScreenings.Delete;
         }
 
         public override async Task<ApplicationScreeningDto> CreateAsync(CreateApplicationScreeningDto input)
@@ -159,6 +166,7 @@ namespace dvd.bca.Service.ApplicationScreenings
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.ApplicationScreenings.Default)]
         public async Task<List<ApplicationScreeningDto>> GetListByApplicationIdAsync(Guid applicationId)
         {
             try
@@ -186,6 +194,7 @@ namespace dvd.bca.Service.ApplicationScreenings
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.ApplicationScreenings.Create)]
         public async Task<ApplicationScreeningDto> RecordScreeningResultAsync(CreateApplicationScreeningDto input)
         {
             try
@@ -202,6 +211,7 @@ namespace dvd.bca.Service.ApplicationScreenings
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.ApplicationScreenings.Update)]
         public async Task<ApplicationScreeningDto> ChangeScreeningResultAsync(Guid id, UpdateApplicationScreeningDto input)
         {
             try

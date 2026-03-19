@@ -4,6 +4,7 @@ using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.Entity.CandidateRoot;
 using dvd.bca.Entity.Recruitment;
 using dvd.bca.Enums;
+using dvd.bca.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Linq;
@@ -16,7 +17,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace dvd.bca.Service.Applications
 {
-    [Authorize]
+    [Authorize(bcaPermissions.Recruitment.Applications.Default)]
     public class ApplicationAppService
         : CrudAppService<
             Application,
@@ -38,6 +39,12 @@ namespace dvd.bca.Service.Applications
         {
             _recruitmentRequestRepository = recruitmentRequestRepository;
             _candidateRepository = candidateRepository;
+
+            GetPolicyName = bcaPermissions.Recruitment.Applications.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.Applications.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.Applications.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.Applications.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.Applications.Delete;
         }
 
         public override async Task<ApplicationDto> CreateAsync(CreateApplicationDto input)
@@ -166,6 +173,7 @@ namespace dvd.bca.Service.Applications
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.Applications.Default)]
         public async Task<PagedResultDto<ApplicationDto>> GetListByRecruitmentRequestIdAsync(
             Guid recruitmentRequestId,
             PagedAndSortedResultRequestDto input)
@@ -200,6 +208,7 @@ namespace dvd.bca.Service.Applications
             }
         }
 
+        [Authorize(bcaPermissions.Recruitment.Applications.Default)]
         public async Task<PagedResultDto<ApplicationDto>> GetListByCandidateIdAsync(
             Guid candidateId,
             PagedAndSortedResultRequestDto input)

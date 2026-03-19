@@ -1,6 +1,7 @@
 ﻿using dvd.bca.Candidates;
 using dvd.bca.Candidates.Dtos;
 using dvd.bca.Entity.CandidateRoot;
+using dvd.bca.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Linq;
@@ -13,7 +14,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace dvd.bca.Service.Candidates
 {
-    [Authorize]
+    [Authorize(bcaPermissions.Recruitment.Candidates.Default)]
     public class CandidateAppService
         : CrudAppService<
             Candidate,
@@ -33,6 +34,11 @@ namespace dvd.bca.Service.Candidates
         public CandidateAppService(IRepository<Candidate, Guid> repository)
             : base(repository)
         {
+            GetPolicyName = bcaPermissions.Recruitment.Candidates.Default;
+            GetListPolicyName = bcaPermissions.Recruitment.Candidates.Default;
+            CreatePolicyName = bcaPermissions.Recruitment.Candidates.Create;
+            UpdatePolicyName = bcaPermissions.Recruitment.Candidates.Update;
+            DeletePolicyName = bcaPermissions.Recruitment.Candidates.Delete;
         }
 
         public override async Task<CandidateDto> CreateAsync(CreateCandidateDto input)

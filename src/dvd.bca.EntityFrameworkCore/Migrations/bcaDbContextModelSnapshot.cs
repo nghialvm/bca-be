@@ -2071,12 +2071,11 @@ namespace dvd.bca.Migrations
             modelBuilder.Entity("dvd.bca.Entity.ApplicationRoot.CandidateResponse", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ApplicationId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("applicationId");
+                        .HasColumnName("ApplicationId");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2")
@@ -2109,22 +2108,35 @@ namespace dvd.bca.Migrations
                         .HasColumnName("LastModifierId");
 
                     b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)")
                         .HasColumnName("Note");
 
                     b.Property<Guid?>("OfferId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("offerId");
+                        .HasColumnName("OfferId");
+
+                    b.Property<Guid?>("OfferId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ResponseChannel")
+                        .HasColumnType("int")
+                        .HasColumnName("ResponseChannel");
+
+                    b.Property<string>("ResponseContent")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)")
+                        .HasColumnName("ResponseContent");
 
                     b.Property<DateTime>("ResponseTime")
                         .HasColumnType("datetime2")
-                        .HasColumnName("responseTime");
+                        .HasColumnName("ResponseTime");
 
-                    b.Property<string>("ResponseType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("responseType");
+                    b.Property<int>("ResponseType")
+                        .HasColumnType("int")
+                        .HasColumnName("ResponseType");
 
                     b.HasKey("Id");
 
@@ -2132,7 +2144,13 @@ namespace dvd.bca.Migrations
 
                     b.HasIndex("OfferId");
 
-                    b.ToTable("candidateResponses", (string)null);
+                    b.HasIndex("OfferId1");
+
+                    b.HasIndex("ResponseTime");
+
+                    b.HasIndex("ResponseType");
+
+                    b.ToTable("CandidateResponses");
                 });
 
             modelBuilder.Entity("dvd.bca.Entity.ApplicationRoot.Department", b =>
@@ -2958,6 +2976,127 @@ namespace dvd.bca.Migrations
                     b.ToTable("RecruitmentRequests");
                 });
 
+            modelBuilder.Entity("dvd.bca.Entity.Results.Employee", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ApplicationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ApplicationId");
+
+                    b.Property<Guid>("CandidateId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CandidateId");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepartmentId");
+
+                    b.Property<string>("EmployeeCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("EmployeeCode");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("FullName");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<Guid>("JobPositionId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("JobPositionId");
+
+                    b.Property<DateTime>("JoinDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("JoinDate");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasColumnName("Note");
+
+                    b.Property<Guid?>("OfferId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("OfferId");
+
+                    b.Property<int>("SourceType")
+                        .HasColumnType("int")
+                        .HasColumnName("SourceType");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("Status");
+
+                    b.Property<string>("WorkEmail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("WorkEmail");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("CandidateId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("EmployeeCode")
+                        .IsUnique();
+
+                    b.HasIndex("JobPositionId");
+
+                    b.HasIndex("OfferId");
+
+                    b.ToTable("Employees");
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
                 {
                     b.HasOne("Volo.Abp.AuditLogging.AuditLog", null)
@@ -3191,13 +3330,17 @@ namespace dvd.bca.Migrations
                     b.HasOne("dvd.bca.Entity.ApplicationRoot.Application", "Application")
                         .WithMany("CandidateResponses")
                         .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("dvd.bca.Entity.ApplicationRoot.Offer", "Offer")
-                        .WithMany("CandidateResponses")
+                        .WithMany()
                         .HasForeignKey("OfferId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("dvd.bca.Entity.ApplicationRoot.Offer", null)
+                        .WithMany("CandidateResponses")
+                        .HasForeignKey("OfferId1");
 
                     b.Navigation("Application");
 
@@ -3295,6 +3438,47 @@ namespace dvd.bca.Migrations
                     b.Navigation("Department");
 
                     b.Navigation("JobPosition");
+                });
+
+            modelBuilder.Entity("dvd.bca.Entity.Results.Employee", b =>
+                {
+                    b.HasOne("dvd.bca.Entity.ApplicationRoot.Application", "Application")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("dvd.bca.Entity.CandidateRoot.Candidate", "Candidate")
+                        .WithMany()
+                        .HasForeignKey("CandidateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dvd.bca.Entity.ApplicationRoot.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dvd.bca.Entity.ApplicationRoot.JobPosition", "JobPosition")
+                        .WithMany()
+                        .HasForeignKey("JobPositionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dvd.bca.Entity.ApplicationRoot.Offer", "Offer")
+                        .WithMany()
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Candidate");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("JobPosition");
+
+                    b.Navigation("Offer");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
