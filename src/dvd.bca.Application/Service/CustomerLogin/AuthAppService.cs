@@ -38,7 +38,7 @@ namespace dvd.bca.Service.CustomerLogin
                 Id = user.Id.ToString(),
                 UserName = user.UserName,
                 Email = user.Email,
-                Roles = roles[0]
+                Role = roles.FirstOrDefault()
             };
         }
     }
