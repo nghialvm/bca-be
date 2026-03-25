@@ -31,24 +31,32 @@ namespace dvd.bca.Data
 
         public async Task SeedAsync(DataSeedContext context)
         {
-            await CreateRoleIfNotExistsAsync("Admin");
-            await CreateRoleIfNotExistsAsync("Employer");
-            await CreateRoleIfNotExistsAsync("Candidate");
+            await CreateRoleIfNotExistsAsync("Admin", false);
+            await CreateRoleIfNotExistsAsync("Employer", false);
+            await CreateRoleIfNotExistsAsync("Candidate", true);
 
             await GrantAdminPermissionsAsync();
             await GrantEmployerPermissionsAsync();
             await GrantCandidatePermissionsAsync();
         }
 
-        private async Task CreateRoleIfNotExistsAsync(string roleName)
+        private async Task CreateRoleIfNotExistsAsync(string roleName, bool isDefault = false)
         {
             var role = await _roleRepository.FindByNormalizedNameAsync(roleName.ToUpperInvariant());
+
             if (role != null)
             {
+                // Nếu role đã tồn tại thì vẫn cập nhật lại IsDefault cho đúng
+                role.IsDefault = isDefault;
+                (await _roleManager.UpdateAsync(role)).CheckErrors();
                 return;
             }
 
-            var newRole = new IdentityRole(_guidGenerator.Create(), roleName);
+            var newRole = new IdentityRole(_guidGenerator.Create(), roleName)
+            {
+                IsDefault = isDefault
+            };
+
             (await _roleManager.CreateAsync(newRole)).CheckErrors();
         }
 
