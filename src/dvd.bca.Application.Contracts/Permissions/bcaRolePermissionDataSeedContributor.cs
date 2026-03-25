@@ -12,6 +12,10 @@ namespace dvd.bca.Data
 {
     public class bcaRolePermissionDataSeedContributor : IDataSeedContributor, ITransientDependency
     {
+        private const string AdminRoleName = "admin";
+        private const string EmployerRoleName = "employer";
+        private const string CandidateRoleName = "candidate";
+
         private readonly IIdentityRoleRepository _roleRepository;
         private readonly IdentityRoleManager _roleManager;
         private readonly IGuidGenerator _guidGenerator;
@@ -31,40 +35,34 @@ namespace dvd.bca.Data
 
         public async Task SeedAsync(DataSeedContext context)
         {
-            await CreateRoleIfNotExistsAsync("Admin", false);
-            await CreateRoleIfNotExistsAsync("Employer", false);
-            await CreateRoleIfNotExistsAsync("Candidate", true);
+            var adminRoleName = await GetOrCreateRoleNameAsync(AdminRoleName);
+            var employerRoleName = await GetOrCreateRoleNameAsync(EmployerRoleName);
+            var candidateRoleName = await GetOrCreateRoleNameAsync(CandidateRoleName);
 
-            await GrantAdminPermissionsAsync();
-            await GrantEmployerPermissionsAsync();
-            await GrantCandidatePermissionsAsync();
+            await GrantAdminPermissionsAsync(adminRoleName);
+            await GrantEmployerPermissionsAsync(employerRoleName);
+            await GrantCandidatePermissionsAsync(candidateRoleName);
         }
 
-        private async Task CreateRoleIfNotExistsAsync(string roleName, bool isDefault = false)
+        private async Task<string> GetOrCreateRoleNameAsync(string roleName)
         {
             var role = await _roleRepository.FindByNormalizedNameAsync(roleName.ToUpperInvariant());
-
             if (role != null)
             {
-                // Nếu role đã tồn tại thì vẫn cập nhật lại IsDefault cho đúng
-                role.IsDefault = isDefault;
-                (await _roleManager.UpdateAsync(role)).CheckErrors();
-                return;
+                return role.Name;
             }
 
-            var newRole = new IdentityRole(_guidGenerator.Create(), roleName)
-            {
-                IsDefault = isDefault
-            };
-
+            var newRole = new IdentityRole(_guidGenerator.Create(), roleName);
             (await _roleManager.CreateAsync(newRole)).CheckErrors();
+
+            return newRole.Name;
         }
 
-        private async Task GrantAdminPermissionsAsync()
+        private async Task GrantAdminPermissionsAsync(string roleName)
         {
             await _permissionDataSeeder.SeedAsync(
                 RolePermissionValueProvider.ProviderName,
-                "Admin",
+                roleName,
                 new[]
                 {
                     bcaPermissions.Recruitment.Departments.Default,
@@ -136,11 +134,11 @@ namespace dvd.bca.Data
             );
         }
 
-        private async Task GrantEmployerPermissionsAsync()
+        private async Task GrantEmployerPermissionsAsync(string roleName)
         {
             await _permissionDataSeeder.SeedAsync(
                 RolePermissionValueProvider.ProviderName,
-                "Employer",
+                roleName,
                 new[]
                 {
                     bcaPermissions.Recruitment.Departments.Default,
@@ -149,9 +147,7 @@ namespace dvd.bca.Data
                     bcaPermissions.Recruitment.RecruitmentRequests.Default,
                     bcaPermissions.Recruitment.RecruitmentRequests.Create,
                     bcaPermissions.Recruitment.RecruitmentRequests.Update,
-                    bcaPermissions.Recruitment.RecruitmentRequests.Approve,
-                    bcaPermissions.Recruitment.RecruitmentRequests.Reject,
-                    bcaPermissions.Recruitment.RecruitmentRequests.Publish,
+                    bcaPermissions.Recruitment.RecruitmentRequests.SubmitForApproval,
                     bcaPermissions.Recruitment.RecruitmentRequests.Close,
 
                     bcaPermissions.Recruitment.Candidates.Default,
@@ -193,16 +189,20 @@ namespace dvd.bca.Data
             );
         }
 
-        private async Task GrantCandidatePermissionsAsync()
+        private async Task GrantCandidatePermissionsAsync(string roleName)
         {
             await _permissionDataSeeder.SeedAsync(
                 RolePermissionValueProvider.ProviderName,
-                "Candidate",
+                roleName,
                 new[]
                 {
+                    bcaPermissions.Recruitment.Departments.Default,
+                    bcaPermissions.Recruitment.JobPositions.Default,
+                    bcaPermissions.Recruitment.RecruitmentRequests.Default,
                     bcaPermissions.Recruitment.Candidates.Default,
                     bcaPermissions.Recruitment.Candidates.Update,
                     bcaPermissions.Recruitment.Applications.Default,
+                    bcaPermissions.Recruitment.Applications.Create,
                     bcaPermissions.Recruitment.Offers.Default,
                     bcaPermissions.Recruitment.CandidateResponses.Default,
                     bcaPermissions.Recruitment.CandidateResponses.Create
