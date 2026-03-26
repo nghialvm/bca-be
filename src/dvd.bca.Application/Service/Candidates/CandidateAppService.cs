@@ -11,6 +11,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Identity;
 
 namespace dvd.bca.Service.Candidates
 {
@@ -25,15 +26,22 @@ namespace dvd.bca.Service.Candidates
             UpdateCandidateDto>,
           ICandidateAppService
     {
+        private const string CandidateRoleName = "candidate";
+
+        private readonly IdentityUserManager _userManager;
+
         protected override string GetPolicyName { get; set; } = null;
         protected override string GetListPolicyName { get; set; } = null;
         protected override string CreatePolicyName { get; set; } = null;
         protected override string UpdatePolicyName { get; set; } = null;
         protected override string DeletePolicyName { get; set; } = null;
 
-        public CandidateAppService(IRepository<Candidate, Guid> repository)
+        public CandidateAppService(
+            IRepository<Candidate, Guid> repository,
+            IdentityUserManager userManager)
             : base(repository)
         {
+            _userManager = userManager;
             GetPolicyName = bcaPermissions.Recruitment.Candidates.Default;
             GetListPolicyName = bcaPermissions.Recruitment.Candidates.Default;
             CreatePolicyName = bcaPermissions.Recruitment.Candidates.Create;
@@ -47,6 +55,14 @@ namespace dvd.bca.Service.Candidates
 
             try
             {
+                await EnsureCandidateUserAsync(input.UserId);
+
+                var candidateByUserId = await Repository.FirstOrDefaultAsync(x => x.Id == input.UserId);
+                if (candidateByUserId != null)
+                {
+                    throw new UserFriendlyException($"Candidate profile for user '{input.UserId}' already exists.");
+                }
+
                 var existedCandidate = await Repository.FirstOrDefaultAsync(x => x.CandidateCode == input.CandidateCode);
                 if (existedCandidate != null)
                 {
@@ -183,7 +199,9 @@ namespace dvd.bca.Service.Candidates
 
         protected override Candidate MapToEntity(CreateCandidateDto createInput)
         {
-            return ObjectMapper.Map<CreateCandidateDto, Candidate>(createInput);
+            var entity = new Candidate(createInput.UserId);
+            ObjectMapper.Map(createInput, entity);
+            return entity;
         }
 
         protected override void MapToEntity(UpdateCandidateDto updateInput, Candidate entity)
@@ -194,6 +212,17 @@ namespace dvd.bca.Service.Candidates
         protected override CandidateDto MapToGetOutputDto(Candidate entity)
         {
             return ObjectMapper.Map<Candidate, CandidateDto>(entity);
+        }
+
+        private async Task EnsureCandidateUserAsync(Guid userId)
+        {
+            var user = await _userManager.GetByIdAsync(userId);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (!roles.Any(x => string.Equals(x, CandidateRoleName, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new UserFriendlyException($"User '{userId}' does not have role '{CandidateRoleName}'.");
+            }
         }
     }
 }

@@ -9,6 +9,9 @@ namespace dvd.bca.Candidates.Dtos
     public class CreateCandidateDto
     {
         [Required]
+        public Guid UserId { get; set; }
+
+        [Required]
         [StringLength(50)]
         public string CandidateCode { get; set; }
 

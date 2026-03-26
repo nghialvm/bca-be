@@ -201,6 +201,8 @@ namespace dvd.bca.Data
                     bcaPermissions.Recruitment.RecruitmentRequests.Default,
                     bcaPermissions.Recruitment.Candidates.Default,
                     bcaPermissions.Recruitment.Candidates.Update,
+                    bcaPermissions.Recruitment.CandidateDocuments.Default,
+                    bcaPermissions.Recruitment.CandidateDocuments.Create,
                     bcaPermissions.Recruitment.Applications.Default,
                     bcaPermissions.Recruitment.Applications.Create,
                     bcaPermissions.Recruitment.Offers.Default,

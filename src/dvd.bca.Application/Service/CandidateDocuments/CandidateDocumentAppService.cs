@@ -1,5 +1,6 @@
 ﻿using dvd.bca.CandidateDocuments;
 using dvd.bca.CandidateDocuments.Dtos;
+using dvd.bca.Candidates;
 using dvd.bca.Entity.CandidateRoot;
 using dvd.bca.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -26,13 +27,16 @@ namespace dvd.bca.Service.CandidateDocuments
             UpdateCandidateDocumentDto>,
         ICandidateDocumentAppService
     {
+        private readonly ICurrentCandidateResolver _currentCandidateResolver;
         private readonly IRepository<Candidate, Guid> _candidateRepository;
 
         public CandidateDocumentAppService(
             IRepository<CandidateDocument, Guid> repository,
-            IRepository<Candidate, Guid> candidateRepository)
+            IRepository<Candidate, Guid> candidateRepository,
+            ICurrentCandidateResolver currentCandidateResolver)
             : base(repository)
         {
+            _currentCandidateResolver = currentCandidateResolver;
             _candidateRepository = candidateRepository;
 
             GetPolicyName = bcaPermissions.Recruitment.CandidateDocuments.Default;
@@ -46,7 +50,7 @@ namespace dvd.bca.Service.CandidateDocuments
         {
             try
             {
-                Console.WriteLine(input.CandidateId);
+                input.CandidateId = await _currentCandidateResolver.NormalizeCandidateIdAsync(input.CandidateId);
                 await CheckCandidateExistsAsync(input.CandidateId);
 
                 var entity = MapToEntity(input);
@@ -65,6 +69,7 @@ namespace dvd.bca.Service.CandidateDocuments
         {
             try
             {
+                input.CandidateId = await _currentCandidateResolver.NormalizeCandidateIdAsync(input.CandidateId);
                 await CheckCandidateExistsAsync(input.CandidateId);
 
                 var entity = await Repository.GetAsync(id);

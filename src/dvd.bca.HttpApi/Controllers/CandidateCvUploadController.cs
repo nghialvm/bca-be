@@ -1,5 +1,6 @@
 using dvd.bca.CandidateDocuments;
 using dvd.bca.CandidateDocuments.Dtos;
+using dvd.bca.Candidates;
 using dvd.bca.Models.Candidate;
 using dvd.bca.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -17,15 +18,18 @@ namespace dvd.bca.Controllers
     public class CandidateCvUploadController : bcaController
     {
         private static readonly string[] AllowedExtensions = [".pdf"];
+        private readonly ICurrentCandidateResolver _currentCandidateResolver;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ICandidateDocumentAppService _candidateDocumentAppService;
 
         public CandidateCvUploadController(
             IWebHostEnvironment webHostEnvironment,
-            ICandidateDocumentAppService candidateDocumentAppService)
+            ICandidateDocumentAppService candidateDocumentAppService,
+            ICurrentCandidateResolver currentCandidateResolver)
         {
             _webHostEnvironment = webHostEnvironment;
             _candidateDocumentAppService = candidateDocumentAppService;
+            _currentCandidateResolver = currentCandidateResolver;
         }
 
         [HttpPost("upload-cv")]
@@ -36,6 +40,8 @@ namespace dvd.bca.Controllers
             {
                 throw new UserFriendlyException("CV file is required.");
             }
+
+            var candidateId = await _currentCandidateResolver.NormalizeCandidateIdAsync(input.CandidateId);
 
             var extension = Path.GetExtension(input.File.FileName);
             if (string.IsNullOrWhiteSpace(extension) ||
@@ -48,7 +54,7 @@ namespace dvd.bca.Controllers
                 _webHostEnvironment.WebRootPath ?? Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot"),
                 "uploads",
                 "cv",
-                input.CandidateId.ToString()
+                candidateId.ToString()
             );
 
             Directory.CreateDirectory(uploadsRoot);
@@ -62,12 +68,12 @@ namespace dvd.bca.Controllers
                 await stream.CopyToAsync(target);
             }
 
-            var relativeUrl = $"/uploads/cv/{input.CandidateId:D}/{storedFileName}";
+            var relativeUrl = $"/uploads/cv/{candidateId:D}/{storedFileName}";
             var absoluteUrl = $"{Request.Scheme}://{Request.Host}{relativeUrl}";
 
             var document = await _candidateDocumentAppService.CreateAsync(new CreateCandidateDocumentDto
             {
-                CandidateId = input.CandidateId,
+                CandidateId = candidateId,
                 DocumentType = "CV",
                 FileName = input.File.FileName,
                 FilePath = absoluteUrl,

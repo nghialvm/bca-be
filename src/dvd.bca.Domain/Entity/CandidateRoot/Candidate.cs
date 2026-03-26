@@ -12,6 +12,15 @@ namespace dvd.bca.Entity.CandidateRoot
     [Table("Candidates")]
     public class Candidate : FullAuditedAggregateRoot<Guid>
     {
+        protected Candidate()
+        {
+        }
+
+        public Candidate(Guid id)
+            : base(id)
+        {
+        }
+
         [Required]
         [StringLength(50)]
         [Column("CandidateCode", TypeName = "varchar(50)")]

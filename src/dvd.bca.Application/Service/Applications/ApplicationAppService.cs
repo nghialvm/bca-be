@@ -1,5 +1,6 @@
 ﻿using dvd.bca.Applications;
 using dvd.bca.Applications.Dtos;
+using dvd.bca.Candidates;
 using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.Entity.CandidateRoot;
 using dvd.bca.Entity.Recruitment;
@@ -28,15 +29,18 @@ namespace dvd.bca.Service.Applications
             UpdateApplicationDto>,
           IApplicationAppService
     {
+        private readonly ICurrentCandidateResolver _currentCandidateResolver;
         private readonly IRepository<RecruitmentRequest, Guid> _recruitmentRequestRepository;
         private readonly IRepository<Candidate, Guid> _candidateRepository;
 
         public ApplicationAppService(
             IRepository<Application, Guid> repository,
             IRepository<RecruitmentRequest, Guid> recruitmentRequestRepository,
-            IRepository<Candidate, Guid> candidateRepository)
+            IRepository<Candidate, Guid> candidateRepository,
+            ICurrentCandidateResolver currentCandidateResolver)
             : base(repository)
         {
+            _currentCandidateResolver = currentCandidateResolver;
             _recruitmentRequestRepository = recruitmentRequestRepository;
             _candidateRepository = candidateRepository;
 
@@ -52,6 +56,7 @@ namespace dvd.bca.Service.Applications
             try
             {
                 await CheckCreatePolicyAsync();
+                input.CandidateId = await _currentCandidateResolver.NormalizeCandidateIdAsync(input.CandidateId);
 
                 await ValidateCreateAsync(input);
 
@@ -76,6 +81,7 @@ namespace dvd.bca.Service.Applications
             try
             {
                 await CheckUpdatePolicyAsync();
+                input.CandidateId = await _currentCandidateResolver.NormalizeCandidateIdAsync(input.CandidateId);
 
                 var entity = await GetEntityByIdAsync(id);
 
