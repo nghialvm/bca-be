@@ -58,11 +58,15 @@ namespace dvd.bca.Service.Offers
 
                 var entity = MapToEntity(input);
 
-                entity.Status = OfferStatus.Draft;
+                entity.Status = OfferStatus.Sent;
+                entity.SentTime ??= Clock.Now;
 
                 entity = await Repository.InsertAsync(entity, autoSave: true);
 
                 var application = await _applicationRepository.GetAsync(entity.ApplicationId);
+                application.Status = ApplicationStatus.Offered;
+                await _applicationRepository.UpdateAsync(application, autoSave: true);
+
                 var candidate = await _candidateRepository.GetAsync(application.CandidateId);
                 if (candidate.Email != null)
                 {
@@ -98,6 +102,7 @@ namespace dvd.bca.Service.Offers
                 MapToEntity(input, entity);
 
                 entity = await Repository.UpdateAsync(entity, autoSave: true);
+                await SyncApplicationStatusAsync(entity);
 
                 return MapToGetOutputDto(entity);
             }
@@ -187,7 +192,7 @@ namespace dvd.bca.Service.Offers
                 throw new UserFriendlyException("This application already has an offer.");
             }
 
-            ValidateOfferDate(input.StartDate, input.SentTime, input.ExpiredTime);
+            ValidateOfferDate(input.StartDate, input.SentTime ?? Clock.Now, input.ExpiredTime);
         }
 
         protected virtual async Task ValidateUpdateAsync(Guid id, UpdateOfferDto input, Offer entity)
@@ -312,6 +317,28 @@ namespace dvd.bca.Service.Offers
                 default:
                     throw new UserFriendlyException("Invalid Offer Status.");
             }
+        }
+
+        protected virtual async Task SyncApplicationStatusAsync(Offer offer)
+        {
+            var application = await _applicationRepository.GetAsync(offer.ApplicationId);
+
+            switch (offer.Status)
+            {
+                case OfferStatus.Sent:
+                    application.Status = ApplicationStatus.Offered;
+                    break;
+                case OfferStatus.Accepted:
+                    application.Status = ApplicationStatus.OfferAccepted;
+                    break;
+                case OfferStatus.Declined:
+                    application.Status = ApplicationStatus.OfferDeclined;
+                    break;
+                default:
+                    return;
+            }
+
+            await _applicationRepository.UpdateAsync(application, autoSave: true);
         }
     }
 }

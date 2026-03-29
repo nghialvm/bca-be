@@ -44,7 +44,8 @@ namespace dvd.bca.Service.Emails
                 <p>We are pleased to offer you the position of <strong>{positionName}</strong>.</p>
                 <p><strong>Salary:</strong> {salary}</p>
                 <p><strong>Start date:</strong> {startDate}</p>
-                <p>Please reply to this email for confirmation.</p>
+                <p>Please log in to the recruitment system to review this offer and choose Accept or Decline on the application detail screen.</p>
+                <p>This mailbox does not process offer acceptance or rejection replies.</p>
                 <p>Best regards,</p>
                 <p>BCA Recruitment Team</p>";
 
