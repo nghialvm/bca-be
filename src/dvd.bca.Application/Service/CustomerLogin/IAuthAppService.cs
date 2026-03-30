@@ -9,5 +9,8 @@ namespace dvd.bca.Service.CustomerLogin
     public interface IAuthAppService
     {
         Task<CurrentUserDto> GetMeAsync();
+        Task ChangePasswordAsync(ChangePasswordDto input);
+        Task ForgotPasswordAsync(ForgotPasswordDto input);
+        Task ResetPasswordAsync(ResetPasswordDto input);
     }
 }

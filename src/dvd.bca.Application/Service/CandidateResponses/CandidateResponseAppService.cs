@@ -60,6 +60,7 @@ namespace dvd.bca.Service.CandidateResponses
                 }
 
                 entity = await Repository.InsertAsync(entity, autoSave: true);
+                await SyncOfferResponseAsync(entity);
 
                 return MapToGetOutputDto(entity);
             }
@@ -85,6 +86,7 @@ namespace dvd.bca.Service.CandidateResponses
                 }
 
                 entity = await Repository.UpdateAsync(entity, autoSave: true);
+                await SyncOfferResponseAsync(entity);
 
                 return MapToGetOutputDto(entity);
             }
@@ -245,6 +247,41 @@ namespace dvd.bca.Service.CandidateResponses
             {
                 throw new UserFriendlyException("OfferId is required for offer response types.");
             }
+        }
+
+        private async Task SyncOfferResponseAsync(CandidateResponse response)
+        {
+            if (!response.OfferId.HasValue)
+            {
+                return;
+            }
+
+            var nextOfferStatus = response.ResponseType switch
+            {
+                CandidateResponseType.OfferAccepted => OfferStatus.Accepted,
+                CandidateResponseType.OfferDeclined => OfferStatus.Declined,
+                _ => (OfferStatus?)null
+            };
+
+            var nextApplicationStatus = response.ResponseType switch
+            {
+                CandidateResponseType.OfferAccepted => ApplicationStatus.OfferAccepted,
+                CandidateResponseType.OfferDeclined => ApplicationStatus.OfferDeclined,
+                _ => (ApplicationStatus?)null
+            };
+
+            if (!nextOfferStatus.HasValue || !nextApplicationStatus.HasValue)
+            {
+                return;
+            }
+
+            var offer = await _offerRepository.GetAsync(response.OfferId.Value);
+            offer.Status = nextOfferStatus.Value;
+            await _offerRepository.UpdateAsync(offer, autoSave: true);
+
+            var application = await _applicationRepository.GetAsync(response.ApplicationId);
+            application.Status = nextApplicationStatus.Value;
+            await _applicationRepository.UpdateAsync(application, autoSave: true);
         }
     }
 }
