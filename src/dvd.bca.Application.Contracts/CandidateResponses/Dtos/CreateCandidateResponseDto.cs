@@ -23,9 +23,9 @@ namespace dvd.bca.CandidateResponses.Dtos
         public DateTime ResponseTime { get; set; }
 
         [StringLength(2000)]
-        public string ResponseContent { get; set; }
+        public string? ResponseContent { get; set; }
 
         [StringLength(1000)]
-        public string Note { get; set; }
+        public string? Note { get; set; }
     }
 }

@@ -18,8 +18,8 @@ namespace dvd.bca.CandidateResponses.Dtos
 
         public DateTime ResponseTime { get; set; }
 
-        public string ResponseContent { get; set; }
+        public string? ResponseContent { get; set; }
 
-        public string Note { get; set; }
+        public string? Note { get; set; }
     }
 }

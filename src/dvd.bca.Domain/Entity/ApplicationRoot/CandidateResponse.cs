@@ -33,11 +33,11 @@ namespace dvd.bca.Entity.ApplicationRoot
 
         [StringLength(2000)]
         [Column("ResponseContent", TypeName = "nvarchar(2000)")]
-        public string ResponseContent { get; set; }
+        public string? ResponseContent { get; set; }
 
         [StringLength(1000)]
         [Column("Note", TypeName = "nvarchar(1000)")]
-        public string Note { get; set; }
+        public string? Note { get; set; }
 
         public virtual Application Application { get; set; }
         public virtual Offer Offer { get; set; }
