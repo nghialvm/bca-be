@@ -265,7 +265,7 @@ namespace dvd.bca.Service.CandidateResponses
 
             var nextApplicationStatus = response.ResponseType switch
             {
-                CandidateResponseType.OfferAccepted => ApplicationStatus.OfferAccepted,
+                CandidateResponseType.OfferAccepted => ApplicationStatus.Hired,
                 CandidateResponseType.OfferDeclined => ApplicationStatus.OfferDeclined,
                 _ => (ApplicationStatus?)null
             };

@@ -329,7 +329,7 @@ namespace dvd.bca.Service.Offers
                     application.Status = ApplicationStatus.Offered;
                     break;
                 case OfferStatus.Accepted:
-                    application.Status = ApplicationStatus.OfferAccepted;
+                    application.Status = ApplicationStatus.Hired;
                     break;
                 case OfferStatus.Declined:
                     application.Status = ApplicationStatus.OfferDeclined;
