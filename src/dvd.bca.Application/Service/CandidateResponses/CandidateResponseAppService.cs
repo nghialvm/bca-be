@@ -4,6 +4,7 @@ using dvd.bca.Entity.ApplicationRoot;
 using dvd.bca.Enums;
 using dvd.bca.Permissions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +67,9 @@ namespace dvd.bca.Service.CandidateResponses
             }
             catch (Exception ex)
             {
-                throw new UserFriendlyException(ex.Message);
+                throw new UserFriendlyException(
+                    ex.InnerException?.Message ?? ex.Message
+                );
             }
         }
 
@@ -123,39 +126,32 @@ namespace dvd.bca.Service.CandidateResponses
 
         public override async Task<PagedResultDto<CandidateResponseDto>> GetListAsync(GetCandidateResponseListInput input)
         {
-            try
-            {
-                var queryable = await Repository.GetQueryableAsync();
+            var queryable = await Repository.GetQueryableAsync();
 
-                queryable = queryable
-                    .WhereIf(input.ApplicationId.HasValue, x => x.ApplicationId == input.ApplicationId.Value)
-                    .WhereIf(input.OfferId.HasValue, x => x.OfferId == input.OfferId.Value)
-                    .WhereIf(input.ResponseType.HasValue, x => x.ResponseType == input.ResponseType.Value)
-                    .WhereIf(input.ResponseChannel.HasValue, x => x.ResponseChannel == input.ResponseChannel.Value)
-                    .WhereIf(input.ResponseTimeFrom.HasValue, x => x.ResponseTime >= input.ResponseTimeFrom.Value)
-                    .WhereIf(input.ResponseTimeTo.HasValue, x => x.ResponseTime <= input.ResponseTimeTo.Value);
+            queryable = queryable
+                .WhereIf(input.ApplicationId.HasValue, x => x.ApplicationId == input.ApplicationId.Value)
+                .WhereIf(input.OfferId.HasValue, x => x.OfferId == input.OfferId.Value)
+                .WhereIf(input.ResponseType.HasValue, x => x.ResponseType == input.ResponseType.Value)
+                .WhereIf(input.ResponseChannel.HasValue, x => x.ResponseChannel == input.ResponseChannel.Value)
+                .WhereIf(input.ResponseTimeFrom.HasValue, x => x.ResponseTime >= input.ResponseTimeFrom.Value)
+                .WhereIf(input.ResponseTimeTo.HasValue, x => x.ResponseTime <= input.ResponseTimeTo.Value);
 
-                var totalCount = await AsyncExecuter.CountAsync(queryable);
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
 
-                var sorting = input.Sorting.IsNullOrWhiteSpace()
-                    ? "ResponseTime desc"
-                    : input.Sorting;
+            var sorting = input.Sorting.IsNullOrWhiteSpace()
+                ? "ResponseTime desc"
+                : input.Sorting;
 
-                var entities = await AsyncExecuter.ToListAsync(
-                    queryable
-                        .OrderBy(sorting)
-                        .Skip(input.SkipCount)
-                        .Take(input.MaxResultCount)
-                );
+            var entities = await AsyncExecuter.ToListAsync(
+                queryable
+                    .OrderBy(sorting)
+                    .Skip(input.SkipCount)
+                    .Take(input.MaxResultCount)
+            );
 
-                var items = entities.Select(MapToGetOutputDto).ToList();
+            var items = entities.Select(MapToGetOutputDto).ToList();
 
-                return new PagedResultDto<CandidateResponseDto>(totalCount, items);
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException(ex.Message);
-            }
+            return new PagedResultDto<CandidateResponseDto>(totalCount, items);
         }
 
         [Authorize(bcaPermissions.Recruitment.CandidateResponses.Default)]
