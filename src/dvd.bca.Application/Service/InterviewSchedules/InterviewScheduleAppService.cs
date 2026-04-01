@@ -59,21 +59,26 @@ namespace dvd.bca.Service.InterviewSchedules
 
                 var entity = MapToEntity(input);
 
-                entity.Status = InterviewStatus.Pending;
-
                 entity = await Repository.InsertAsync(entity, autoSave: true);
                 var application = await _applicationRepository.GetAsync(entity.ApplicationId);
                 var candidate = await _candidateRepository.GetAsync(application.CandidateId);
-                if (candidate.Email != null)
+                if (!string.IsNullOrWhiteSpace(candidate.Email))
                 {
                     await _candidateEmailManager.SendInterviewInvitationAsync(
                         candidate.Email,
-                        candidate.FullName,
-                        entity.ScheduledTime.ToString("dd/MM/yyyy HH:mm"),
-                        (string.IsNullOrWhiteSpace(entity.MeetingLink) ? entity.Location : entity.MeetingLink) ?? ""
+                        candidate.FullName ?? "Candidate",
+                        entity.RoundNumber,
+                        entity.InterviewType,
+                        entity.ScheduledTime,
+                        entity.DurationMinutes,
+                        entity.Location,
+                        entity.MeetingLink,
+                        entity.ContactPerson,
+                        entity.Note
                     );
                 }
-                else {
+                else
+                {
                     throw new UserFriendlyException("Email cannot be empty");
                 }
                 return MapToGetOutputDto(entity);
@@ -232,6 +237,11 @@ namespace dvd.bca.Service.InterviewSchedules
             if (!Enum.IsDefined(typeof(InterviewType), input.InterviewType))
             {
                 throw new UserFriendlyException("InterviewType is invalid.");
+            }
+
+            if (!Enum.IsDefined(typeof(InterviewStatus), input.Status))
+            {
+                throw new UserFriendlyException("Status is invalid.");
             }
 
             var duplicatedRound = await Repository.AnyAsync(x =>

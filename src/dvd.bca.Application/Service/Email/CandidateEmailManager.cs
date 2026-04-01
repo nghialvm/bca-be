@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+using dvd.bca.Enums;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Emailing;
 
@@ -16,15 +19,51 @@ namespace dvd.bca.Service.Emails
         public async Task SendInterviewInvitationAsync(
             string toEmail,
             string candidateName,
-            string interviewTime,
-            string locationOrLink)
+            int roundNumber,
+            InterviewType interviewType,
+            DateTime scheduledTime,
+            int durationMinutes,
+            string? location,
+            string? meetingLink,
+            string? contactPerson,
+            string? note)
         {
-            var subject = "Interview Invitation";
+            var subject = $"Interview Invitation - Round {roundNumber}";
+            var interviewTypeLabel = interviewType switch
+            {
+                InterviewType.Offline => "Offline",
+                InterviewType.Online => "Online",
+                InterviewType.Phone => "Phone",
+                _ => interviewType.ToString()
+            };
+            var venueLabel = string.IsNullOrWhiteSpace(meetingLink)
+                ? "Location"
+                : "Meeting link";
+            var venueValue = string.IsNullOrWhiteSpace(meetingLink)
+                ? location
+                : meetingLink;
+            var contactSection = string.IsNullOrWhiteSpace(contactPerson)
+                ? string.Empty
+                : $"<li><strong>Contact person:</strong> {WebUtility.HtmlEncode(contactPerson)}</li>";
+            var venueSection = string.IsNullOrWhiteSpace(venueValue)
+                ? string.Empty
+                : $"<li><strong>{venueLabel}:</strong> {WebUtility.HtmlEncode(venueValue)}</li>";
+            var noteSection = string.IsNullOrWhiteSpace(note)
+                ? string.Empty
+                : $"<li><strong>Note:</strong> {WebUtility.HtmlEncode(note)}</li>";
             var body = $@"
-                <p>Dear {candidateName},</p>
-                <p>You are invited to interview.</p>
-                <p><strong>Time:</strong> {interviewTime}</p>
-                <p><strong>Location / Link:</strong> {locationOrLink}</p>
+                <p>Dear {WebUtility.HtmlEncode(candidateName)},</p>
+                <p>You are invited to interview with BCA. Please review the schedule details below:</p>
+                <ul>
+                    <li><strong>Round:</strong> {roundNumber}</li>
+                    <li><strong>Interview type:</strong> {interviewTypeLabel}</li>
+                    <li><strong>Time:</strong> {scheduledTime:dd/MM/yyyy HH:mm}</li>
+                    <li><strong>Duration:</strong> {durationMinutes} minutes</li>
+                    {contactSection}
+                    {venueSection}
+                    {noteSection}
+                </ul>
+                <p>Please be ready a few minutes before the scheduled time.</p>
                 <p>Best regards,</p>
                 <p>BCA Recruitment Team</p>";
 
