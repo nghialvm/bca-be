@@ -250,17 +250,20 @@ namespace dvd.bca.Reports
                 applicationsQuery = ApplyApplicationFilter(applicationsQuery, recruitmentRequestsQuery, input);
                 offersQuery = ApplyOfferFilter(offersQuery, applicationsQuery);
 
-                var totalOffers = await offersQuery.CountAsync();
                 var draftOffers = await offersQuery.CountAsync(x => x.Status == OfferStatus.Draft);
                 var sentOffers = await offersQuery.CountAsync(x => x.Status == OfferStatus.Sent);
-                var acceptedOffers = await offersQuery.CountAsync(x => x.Status == OfferStatus.Accepted);
-                var declinedOffers = await offersQuery.CountAsync(x => x.Status == OfferStatus.Declined);
+                var acceptedOffers = await applicationsQuery.CountAsync(x =>
+                    x.Status == ApplicationStatus.OfferAccepted ||
+                    x.Status == ApplicationStatus.Hired);
+                var declinedOffers = await applicationsQuery.CountAsync(x => x.Status == ApplicationStatus.OfferDeclined);
                 var expiredOffers = await offersQuery.CountAsync(x => x.Status == OfferStatus.Expired);
+                var totalOffers = draftOffers + sentOffers + acceptedOffers + declinedOffers + expiredOffers;
+                var actionableOffers = sentOffers + acceptedOffers + declinedOffers + expiredOffers;
 
                 decimal acceptanceRate = 0;
-                if (totalOffers > 0)
+                if (actionableOffers > 0)
                 {
-                    acceptanceRate = Math.Round((decimal)acceptedOffers / totalOffers * 100, 2);
+                    acceptanceRate = Math.Round((decimal)acceptedOffers / actionableOffers * 100, 2);
                 }
 
                 return new OfferStatisticsDto
@@ -290,17 +293,15 @@ namespace dvd.bca.Reports
             {
                 var recruitmentRequestsQuery = await _recruitmentRequestRepository.GetQueryableAsync();
                 var applicationsQuery = await _applicationRepository.GetQueryableAsync();
-                var offersQuery = await _offerRepository.GetQueryableAsync();
-                var employeesQuery = await _employeeRepository.GetQueryableAsync();
 
                 recruitmentRequestsQuery = ApplyRecruitmentRequestFilter(recruitmentRequestsQuery, input);
                 applicationsQuery = ApplyApplicationFilter(applicationsQuery, recruitmentRequestsQuery, input);
-                offersQuery = ApplyOfferFilter(offersQuery, applicationsQuery);
-                employeesQuery = ApplyEmployeeFilter(employeesQuery, input);
 
                 var totalApplications = await applicationsQuery.CountAsync();
-                var totalOffersAccepted = await offersQuery.CountAsync(x => x.Status == OfferStatus.Accepted);
-                var totalHiredEmployees = await employeesQuery.CountAsync();
+                var totalOffersAccepted = await applicationsQuery.CountAsync(x =>
+                    x.Status == ApplicationStatus.OfferAccepted ||
+                    x.Status == ApplicationStatus.Hired);
+                var totalHiredEmployees = await applicationsQuery.CountAsync(x => x.Status == ApplicationStatus.Hired);
 
                 decimal applicationToHireRate = 0;
                 decimal offerAcceptedToHireRate = 0;
@@ -662,5 +663,6 @@ namespace dvd.bca.Reports
 
             return query;
         }
+
     }
 }
